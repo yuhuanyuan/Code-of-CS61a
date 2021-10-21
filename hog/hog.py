@@ -1,5 +1,6 @@
 """CS 61A Presents The Game of Hog."""
 
+from inspect import currentframe
 from dice import six_sided, four_sided, make_test_dice
 from ucb import main, trace, interact
 
@@ -127,10 +128,25 @@ def play(strategy0, strategy1, score0=0, score1=0, dice=six_sided,
     player = 0  # Which player is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    while max(score0,score1) < 100:
+        if player == 0:
+         new_score0 = take_turn(strategy0(score0,score1),score1) 
+         score0 += new_score0
+         if is_swap(score0,score1) == 1:
+          score0,score1 = score1,score0
+        else:
+         new_score1 = take_turn(strategy1(score0,score1),score0) 
+         score1 += new_score1
+         if is_swap(score0,score1) == 1:
+          score0,score1 = score1,score0
+        player = other(player)
+
+
     # END PROBLEM 5
     # (note that the indentation for the problem 6 prompt (***YOUR CODE HERE***) might be misleading)
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
+    say = say_scores(score0,score1)
     # END PROBLEM 6
     return score0, score1
 
@@ -217,6 +233,16 @@ def announce_highest(who, previous_high=0, previous_score=0):
     assert who == 0 or who == 1, 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    def say(score0,score1):
+        current_score = (score0,score1)[who]
+        gain = current_score - previous_score
+        if gain > previous_high:
+            current_high = gain
+        else:
+            current_high = previous_high
+        print(f'{current_high} point(s)! That is the biggest gain yet for Player {who}')
+        return announce_highest(who,current_high,current_score)
+    return say
     # END PROBLEM 7
 
 
@@ -256,6 +282,14 @@ def make_averaged(fn, num_samples=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    def aver(*args):
+        sum = 0
+        i = 0
+        if i < num_samples:
+            i += 1
+            sum += fn(*args)
+        return sum/num_samples
+    return aver
     # END PROBLEM 8
 
 
@@ -270,6 +304,21 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    pre_roll_maxnumber = 0
+    max_score = 0
+    num_rolls = 1
+    assert num_rolls <= 10, 'Current dice number must be less than 10!'
+    if num_rolls <= 10:
+        
+        
+        a = make_averaged(roll_dice,num_samples)(num_rolls,dice)
+        if a >= max_score:
+            max_score = a
+            
+            if num_rolls < pre_roll_maxnumber:
+              roll_maxnumber = num_rolls
+              pre_roll_maxnumber = roll_maxnumber
+    return roll_maxnumber
     # END PROBLEM 9
 
 
@@ -318,6 +367,9 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=4):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
+    real_margin = free_bacon(opponent_score)
+    if real_margin >= margin:
+        return 0
     return 4  # Replace this statement
     # END PROBLEM 10
 
@@ -328,6 +380,14 @@ def swap_strategy(score, opponent_score, margin=8, num_rolls=4):
     non-beneficial swap. Otherwise, it rolls NUM_ROLLS.
     """
     # BEGIN PROBLEM 11
+    real_margin = free_bacon(opponent_score)
+    current_score = real_margin + score
+    if is_swap(current_score,opponent_score) == 1 and current_score < opponent_score:
+        return 0
+    elif real_margin >= margin:
+        if is_swap(current_score,opponent_score) == 1 and current_score > opponent_score:
+            return num_rolls
+        return 0    
     return 4  # Replace this statement
     # END PROBLEM 11
 
