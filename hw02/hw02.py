@@ -1,4 +1,4 @@
-""" Homework 2: Higher Order Functions"""
+  """ Homework 2: Higher Order Functions"""
 
 HW_SOURCE_FILE = 'hw02.py'
 
@@ -25,7 +25,9 @@ def make_adder(n):
     >>> make_adder(1)(2)
     3
     """
-    return 'YOUR EXPRESSION HERE'
+    def make_add(k)
+     return k+n
+    return make_add
 
 def product(n, term):
     """Return the product of the first n terms in a sequence.
@@ -49,6 +51,11 @@ def product(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    result = 1
+    while n >= 1:
+        result *= term(n)
+        n -= 1
+    return result
 
 def factorial(n):
     """Return n factorial for n >= 0 by calling product.
@@ -62,6 +69,9 @@ def factorial(n):
     True
     """
     "*** YOUR CODE HERE ***"
+
+    return product(n,identify)
+
 
 def accumulate(combiner, base, n, term):
     """Return the result of combining the first n terms in a sequence and base.
@@ -82,7 +92,14 @@ def accumulate(combiner, base, n, term):
     19      #(((2 + 1^2 + 1) + 2^2 + 1) + 3^2 + 1)
     """
     "*** YOUR CODE HERE ***"
-
+    if n == 0:
+        return base
+    def acc(a):
+        if a == 1:
+            return term(1)
+        else:
+            return combiner(acc(a-1),term(a))
+    return combiner(base,acc(n))
 def summation_using_accumulate(n, term):
     """Returns the sum of term(1) + ... + term(n). The implementation
     uses accumulate.
@@ -97,6 +114,7 @@ def summation_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
+    return accumulate(add, 0, n, term)
 
 def product_using_accumulate(n, term):
     """An implementation of product using accumulate.
@@ -111,7 +129,7 @@ def product_using_accumulate(n, term):
     True
     """
     "*** YOUR CODE HERE ***"
-
+    return accumulate(mul, 1, n, term)
 
 
 ###################
@@ -136,7 +154,11 @@ def make_repeater(f, n):
     625
     >>> make_repeater(square, 4)(5) # square(square(square(square(5))))
     152587890625
-    >>> make_repeater(square, 0)(5) # Yes, it makes sense to apply the function zero times! 
+    >>> make_repeater(square, 0)(5) # Yes, it makes sense to apply the function zero times!
     5
     """
     "*** YOUR CODE HERE ***"
+    if n == 0:
+        return lambda x: x
+
+    return lambda x:compose1(f,make_repeater(f,n-1))(x)
