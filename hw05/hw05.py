@@ -165,11 +165,11 @@ def preorder(t):
     [2, 4, 6]
     """
     "*** YOUR CODE HERE ***"
-    if is_leaf(t):
-        return [label(t)]
-    for blance in branches(t):
-        preorder(blance)
-
+    result = []
+    result.append(label(t))
+    for branch in branches(t):
+        result.extend(preorder(branch))
+    return result
 
 class Mint:
     """A mint creates coins by stamping on years.
@@ -288,3 +288,7 @@ def copy_tree(t):
     5
     """
     return tree(label(t), [copy_tree(b) for b in branches(t)])
+numbers = tree(1, [tree(2), tree(3, [tree(4), tree(5)]), tree(6, [tree(7)])])
+print(preorder(numbers))
+
+
