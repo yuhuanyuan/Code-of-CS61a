@@ -1,5 +1,3 @@
-HW_SOURCE_FILE = 'hw03.py'
-
 #########
 # Trees #
 #########
@@ -66,61 +64,40 @@ def copy_tree(t):
     5
     """
     return tree(label(t), [copy_tree(b) for b in branches(t)])
-    
-t = tree(1, [tree(2), tree(3, [tree(4), tree(5)]), tree(6, [tree(7)])])
-#############
-# Questions #
-#############
-def intersection(st, ave):
-    """Represent an intersection using the Cantor pairing function."""
-    return (st+ave)*(st+ave+1)//2 + ave
 
-def street(inter):
-    return w(inter) - avenue(inter)
-
-def avenue(inter):
-    return inter - (w(inter) ** 2 + w(inter)) // 2
-
-w = lambda z: int(((8*z+1)**0.5-1)/2)
-
-def taxicab(a, b):
-    """Return the taxicab distance between two intersections.
-
-    >>> times_square = intersection(46, 7)
-    >>> ess_a_bagel = intersection(51, 3)
-    >>> taxicab(times_square, ess_a_bagel)
-    9
-    >>> taxicab(ess_a_bagel, times_square)
-    9
-    """
-    "*** YOUR CODE HERE ***"
-    return abs(street(a)-street(b)) + abs(avenue(a)-avenue(b))
-
-def flatten(lst):
-    """Returns a flattened version of lst.
-
-    >>> flatten([1, 2, 3])     # normal list
-    [1, 2, 3]
-    >>> x = [1, [2, 3], 4]      # deep list
-    >>> flatten(x)
-    [1, 2, 3, 4]
-    >>> x # Ensure x is not mutated
-    [1, [2, 3], 4]
-    >>> x = [[1, [1, 1]], 1, [1, 1]] # deep list
-    >>> flatten(x)
-    [1, 1, 1, 1, 1, 1]
-    >>> x
-    [[1, [1, 1]], 1, [1, 1]]
-    """
-    "*** YOUR CODE HERE ***"
-    if type(lst) != list:
-        return [lst]
-
-
-    return sum([flatten(i) for i in lst],[])
+######################
+# Required questions #
+######################
 
 def replace_leaf(t, old, new):
+    """Returns a new tree where every leaf value equal to old has
+    been replaced with new.
 
+    >>> yggdrasil = tree('odin',
+    ...                  [tree('balder',
+    ...                        [tree('thor'),
+    ...                         tree('loki')]),
+    ...                   tree('frigg',
+    ...                        [tree('thor')]),
+    ...                   tree('thor',
+    ...                        [tree('sif'),
+    ...                         tree('thor')]),
+    ...                   tree('thor')])
+    >>> laerad = copy_tree(yggdrasil) # copy yggdrasil for testing purposes
+    >>> print_tree(replace_leaf(yggdrasil, 'thor', 'freya'))
+    odin
+      balder
+        freya
+        loki
+      frigg
+        freya
+      thor
+        sif
+        freya
+      freya
+    >>> laerad == yggdrasil # Make sure original tree is unmodified
+    True
+    """
     "*** YOUR CODE HERE ***"
     if is_leaf(t):
         if label(t) == old:
@@ -130,6 +107,37 @@ def replace_leaf(t, old, new):
         if label(t) == old:
             return tree(new,[replace_leaf(b,old,new) for b in branches(t)])
         return tree(label(t),[replace_leaf(b,old,new) for b in branches(t)])
+def prune_leaves(t, vals):
+    """Return a modified copy of t with all leaves that have a label
+    that appears in vals removed.  Return None if the entire tree is
+    pruned away.
+
+    >>> t = tree(2)
+    >>> print(prune_leaves(t, (1, 2)))
+    None
+    >>> numbers = tree(1, [tree(2), tree(3, [tree(4), tree(5)]), tree(6, [tree(7)])])
+    >>> print_tree(numbers)
+    1
+      2
+      3
+        4
+        5
+      6
+        7
+    >>> print_tree(prune_leaves(numbers, (3, 4, 6, 7)))
+    1
+      2
+      3
+        5
+      6
+    """
+    "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        if label(t) in vals:
+            return None
+        return tree(label(t))        
+    return tree(label(t),[prune_leaves(b,vals) for b in branches(t) if prune_leaves(b, vals) is not None])
+
 # Mobiles
 
 def mobile(left, right):
@@ -182,6 +190,7 @@ def size(w):
     assert is_weight(w), 'must call size on a weight'
     "*** YOUR CODE HERE ***"
     return w[1]
+
 
 def is_weight(w):
     """Whether w is a weight."""
@@ -241,8 +250,6 @@ def balanced(m):
     else:
       right_balance=True
     return (left_torque==right_torque ) and left_balance and right_balance 
-
-
 def totals_tree(m):
     """Return a tree representing the mobile with its total weight at the root.
 
@@ -273,6 +280,7 @@ def totals_tree(m):
       return tree(total_weight(m))
     else:
       return tree(total_weight(m), [totals_tree(end(left(m))), totals_tree(end(right(m)))])
+
 ###################
 # Extra Questions #
 ###################
@@ -292,8 +300,7 @@ def two(f):
     """Church numeral 2: same as successor(successor(zero))"""
     "*** YOUR CODE HERE ***"
     return lambda x: f(f(x))
-   
-three = successor(two)
+
 
 def church_to_int(n):
     """Convert the Church numeral n to a Python integer.
@@ -308,8 +315,7 @@ def church_to_int(n):
     3
     """
     "*** YOUR CODE HERE ***"
-    return n(lambda x: x + 1)(0)
-    
+    return n(lambda x: x + 1)(0) 
 def add_church(m, n):
     """Return the Church numeral for m + n, for Church numerals m and n.
 
@@ -317,8 +323,7 @@ def add_church(m, n):
     5
     """
     "*** YOUR CODE HERE ***"
-    return lambda f: lambda x :n(f)(x) + m(f)(x)
-
+    return lambda f: lambda x: m(f)(x) + n(f)(x)
 def mul_church(m, n):
     """Return the Church numeral for m * n, for Church numerals m and n.
 
@@ -329,7 +334,7 @@ def mul_church(m, n):
     12
     """
     "*** YOUR CODE HERE ***"
-    return lambda f: lambda x :m(n(f))(x)
+    return lambda f: lambda x: n(m(f))(x)
 def pow_church(m, n):
     """Return the Church numeral m ** n, for Church numerals m and n.
 
@@ -339,7 +344,4 @@ def pow_church(m, n):
     9
     """
     "*** YOUR CODE HERE ***"
-    return lambda f: lambda x: m(f)(x)**n(f)(x)
-
-
-
+    return lambda f: lambda x: n(f)(x)**m(f)(x)
