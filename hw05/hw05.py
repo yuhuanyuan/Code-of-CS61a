@@ -208,9 +208,10 @@ class Mint:
 
     def create(self, kind):
         "*** YOUR CODE HERE ***"
-
+        return kind(self.year)
     def update(self):
         "*** YOUR CODE HERE ***"
+        self.year = Mint.current_year
 
 class Coin:
     def __init__(self, year):
@@ -218,12 +219,18 @@ class Coin:
 
     def worth(self):
         "*** YOUR CODE HERE ***"
-
+        if Mint.current_year-self.year> 50:
+            return self.cents +  Mint.current_year-self.year-50
+        else:
+            return self.cents
+        
 class Nickel(Coin):
     cents = 5
 
 class Dime(Coin):
     cents = 10
+
+
 
 
 def tree(label, branches=[]):
@@ -288,7 +295,5 @@ def copy_tree(t):
     5
     """
     return tree(label(t), [copy_tree(b) for b in branches(t)])
-numbers = tree(1, [tree(2), tree(3, [tree(4), tree(5)]), tree(6, [tree(7)])])
-print(preorder(numbers))
 
 
