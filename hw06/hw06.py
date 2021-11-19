@@ -110,7 +110,6 @@ class VendingMachine:
                     c = self.balance 
                     self.balance = 0
                     return 'Here is your candy and $'+ str(c - self.price) +' change.'
-            
                 return 'Here is your ' + str(self.kind)
         
     def restock(self,number):
