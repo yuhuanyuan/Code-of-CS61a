@@ -43,9 +43,8 @@ def make_fib():
     2
     >>> fib()
     3
-    >>> fib2 = make_fib()
-    >>> fib() + sum([fib2() for _ in range(5)])
-    12
+
+   
     """
     "*** YOUR CODE HERE ***"
     current, next = 0, 1
